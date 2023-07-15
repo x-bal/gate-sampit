@@ -26,7 +26,7 @@
                         <a class="nav-link" href="/cards">Cards</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Logs</a>
+                        <a class="nav-link" href="/logs">Logs</a>
                     </li>
                 </ul>
             </div>

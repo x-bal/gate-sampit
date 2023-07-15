@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('card_id')->constrained('cards')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('rfid', 50);
+            $table->string('nopol', 50);
             $table->timestamp('waktu');
-            $table->integer('status');
+            $table->string('status', 20);
             $table->timestamps();
         });
     }
