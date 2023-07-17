@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gate;
 use App\Models\Log;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LogController extends Controller
@@ -15,7 +17,7 @@ class LogController extends Controller
     function get(Request $request)
     {
         if ($request->ajax()) {
-            $logs = Log::latest()->get();
+            $logs = Log::with('gate')->latest()->get();
 
             return response()->json([
                 'logs' => $logs
@@ -23,33 +25,15 @@ class LogController extends Controller
         }
     }
 
-    public function create()
+    function gate(Request $request)
     {
-        //
-    }
+        $now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+        $limit = Carbon::now('Asia/Jakarta')->subSecond(30)->format('Y-m-d H:i:s');
 
-    public function store(Request $request)
-    {
-        //
-    }
+        $logs = Log::where('gate_id', $request->gate)->whereBetween('waktu', [$limit, $now])->latest()->get();
 
-    public function show(Log $log)
-    {
-        //
-    }
-
-    public function edit(Log $log)
-    {
-        //
-    }
-
-    public function update(Request $request, Log $log)
-    {
-        //
-    }
-
-    public function destroy(Log $log)
-    {
-        //
+        return response()->json([
+            'logs' => $logs
+        ]);
     }
 }

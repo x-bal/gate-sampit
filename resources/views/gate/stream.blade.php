@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mt-3">
 
-    <h2>Logs RFID Page</h2>
+    <h2>Stream {{ $gate->name }} Page</h2>
 
     <div class="row mt-5">
         <div class="col-md-12">
@@ -13,10 +13,9 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Tanggal</th>
-                            <th>RFID</th>
-                            <th>Gate</th>
-                            <th>Nomor Plat</th>
+                            <th>Waktu</th>
+                            <th>Rfid</th>
+                            <th>Nopol</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -38,21 +37,21 @@
 
         function get() {
             $.ajax({
-                url: "/get-logs",
+                url: "/gate-logs?gate=" + "{{ $gate->id }}",
                 type: "GET",
                 method: "GET",
                 success: function(response) {
+                    console.log(response)
                     let logs = response.logs
                     let no = 1;
                     $.each(logs, function(i, data) {
                         $("#body-logs").append(`<tr>
-                            <td>` + no++ + `</td>
-                            <td>` + data.waktu + `</td>
-                            <td>` + data.rfid + `</td>
-                            <td>` + data.gate.name + `</td>
-                            <td>` + data.nopol + `</td>
-                            <td>` + data.status + `</td>
-                        </tr>`);
+                    <td>` + no++ + `</td>
+                    <td>` + data.waktu + `</td>
+                    <td>` + data.rfid + `</td>
+                    <td>` + data.nopol + `</td>
+                    <td>` + data.status + `</td>
+                </tr>`);
                     })
                 }
             })
@@ -67,7 +66,6 @@
                 window.location.reload()
             }
         }, 1500)
-
     })
 </script>
 @endpush

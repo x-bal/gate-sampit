@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\GateController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\Route;
@@ -22,4 +23,8 @@ Route::get('/cards/change/{card:id}', [CardController::class, 'change'])->name("
 Route::resource('/cards', CardController::class);
 
 Route::get('/get-logs', [LogController::class, 'get']);
+Route::get('/gate-logs', [LogController::class, 'gate']);
 Route::resource('/logs', LogController::class);
+
+Route::get('/gates/{gate:id}/stream', [GateController::class, 'stream'])->name('gates.stream');
+Route::resource('gates', GateController::class);
