@@ -2,22 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gate;
 use App\Models\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('log.index');
+        $logs = [];
+        if ($request->from && $request->to) {
+            $to = Carbon::parse($request->to)->addDay(1)->format('Y-m-d H:i:s');
+            $logs = Log::with('gate')->whereBetween('waktu', [$request->from, $to])->latest()->get();
+        }
+        return view('log.index', compact('logs'));
     }
 
     function get(Request $request)
     {
         if ($request->ajax()) {
-            $logs = Log::with('gate')->latest()->get();
+            $now = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+            $logs = Log::with('gate')->whereDate('waktu', $now)->latest()->get();
 
             return response()->json([
                 'logs' => $logs

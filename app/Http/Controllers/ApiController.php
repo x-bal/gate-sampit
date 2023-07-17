@@ -25,6 +25,7 @@ class ApiController extends Controller
                             'nopol' => $card->nopol,
                             'waktu' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
                             'status' => $card->status == 1 ? 'Active' : 'Nonactive',
+                            'gate_id' => $request->gate
                         ]);
                     } else {
                         Log::create([
@@ -32,6 +33,7 @@ class ApiController extends Controller
                             'nopol' => '-',
                             'waktu' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
                             'status' => 'Tidak Terdaftar',
+                            'gate_id' => $request->gate
                         ]);
                     }
                 }

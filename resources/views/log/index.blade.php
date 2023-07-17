@@ -2,12 +2,31 @@
 
 @section('content')
 <div class="container mt-3">
-
     <h2>Logs RFID Page</h2>
 
-    <div class="row mt-5">
-        <div class="col-md-12">
+    <form action="" class="row mt-5" target="_blank">
+        <div class="col-md-4">
+            <div class="form-group ">
+                <label for="from">From</label>
+                <input type="date" name="from" id="from" class="form-control" value="{{ request('from') ?? '' }}">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group ">
+                <label for="to">To</label>
+                <input type="date" name="to" id="to" class="form-control" value="{{ request('from') ?? '' }}">
+            </div>
+        </div>
 
+        <div class="col-md-4">
+            <div class="form-group mt-2">
+                <button type="submit" class="btn btn-primary mt-3">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
             <div class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -21,9 +40,24 @@
                         </tr>
                     </thead>
 
+                    @if(request('from') && request('to'))
+                    <tbody>
+                        @foreach($logs as $log)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $log->waktu }}</td>
+                            <td>{{ $log->rfid }}</td>
+                            <td>{{ $log->gate->name }}</td>
+                            <td>{{ $log->nopol }}</td>
+                            <td>{{ $log->status }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    @else
                     <tbody id="body-logs">
 
                     </tbody>
+                    @endif
                 </table>
             </div>
         </div>
@@ -32,42 +66,73 @@
 @stop
 
 @push('script')
+@if(!request('from') && !request('to'))
 <script>
-    $(document).ready(function() {
-        let counter = 0;
+    let counter = 0;
 
-        function get() {
-            $.ajax({
-                url: "/get-logs",
-                type: "GET",
-                method: "GET",
-                success: function(response) {
-                    let logs = response.logs
-                    let no = 1;
-                    $.each(logs, function(i, data) {
-                        $("#body-logs").append(`<tr>
-                            <td>` + no++ + `</td>
-                            <td>` + data.waktu + `</td>
-                            <td>` + data.rfid + `</td>
-                            <td>` + data.gate.name + `</td>
-                            <td>` + data.nopol + `</td>
-                            <td>` + data.status + `</td>
-                        </tr>`);
-                    })
+    function get() {
+        $.ajax({
+            url: "/get-logs",
+            type: "GET",
+            success: function(response) {
+                let logs = response.logs;
+                let storedLogs = JSON.parse(localStorage.getItem("logs")) || [];
+                let newLogs = [];
+
+                // Find new logs
+                for (let i = storedLogs.length; i < logs.length; i++) {
+                    newLogs.push(logs[i]);
                 }
-            })
-        }
+
+                if (newLogs.length > 0) {
+                    // Update stored logs
+                    storedLogs = logs;
+                    localStorage.setItem("logs", JSON.stringify(storedLogs));
+
+                    let no = parseInt($("#body-logs tr:last td:first").text()) || 0;
+                    $.each(newLogs, function(i, data) {
+                        $("#body-logs").append(`<tr>
+            <td>` + (++no) + `</td>
+            <td>` + data.waktu + `</td>
+            <td>` + data.rfid + `</td>
+            <td>` + data.gate.name + `</td>
+            <td>` + data.nopol + `</td>
+            <td>` + data.status + `</td>
+          </tr>`);
+                    });
+                }
+            },
+            error: function() {
+                console.log('Error fetching logs.');
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        // Retrieve logs from localStorage on page load
+        let storedLogs = JSON.parse(localStorage.getItem("logs")) || [];
+        let no = 1;
+
+        $.each(storedLogs, function(i, data) {
+            $("#body-logs").append(`<tr>
+                <td>` + no++ + `</td>
+                <td>` + data.waktu + `</td>
+                <td>` + data.rfid + `</td>
+                <td>` + data.gate.name + `</td>
+                <td>` + data.nopol + `</td>
+                <td>` + data.status + `</td>
+            </tr>`);
+        });
 
         setInterval(function() {
-            $("#body-logs").empty()
             get();
-            counter++
+            counter++;
 
-            if (counter == 1000) {
-                window.location.reload()
+            if (counter >= 1000) {
+                window.location.reload();
             }
-        }, 1500)
-
-    })
+        }, 1500);
+    });
 </script>
+@endif
 @endpush
