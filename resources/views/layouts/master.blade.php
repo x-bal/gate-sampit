@@ -20,13 +20,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/cards">Cards</a>
+                        <a class="nav-link {{ request()->is('cards*') ? 'active' : '' }}" href="/cards">Cards</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/gates">Gates</a>
+                        <a class="nav-link {{ request()->is('gates*') ? 'active' : '' }}" href="/gates">Gates</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logs">Logs</a>
+                        <a class="nav-link {{ request()->is('logs*') ? 'active' : '' }}" href="/logs">Logs</a>
                     </li>
                 </ul>
             </div>
