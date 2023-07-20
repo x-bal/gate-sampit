@@ -102,8 +102,8 @@
                     </tr>`);
                         });
 
-                        console.log(newLogs)
                     }
+                    console.log(newLogs)
                 },
                 error: function() {
                     console.log('Error fetching logs.');
