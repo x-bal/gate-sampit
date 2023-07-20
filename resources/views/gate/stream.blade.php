@@ -50,6 +50,7 @@
 
                     // Find new logs and check if the latest "data.waktu" is different
                     for (let i = storedLogs.length; i < logs.length; i++) {
+                        console.log(logs[i].waktu)
                         if (logs[i].waktu != latestWaktu) {
                             newLogs.push(logs[i]);
                         }
