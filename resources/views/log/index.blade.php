@@ -90,24 +90,18 @@
                         storedLogs = logs;
                         localStorage.setItem("logs", JSON.stringify(storedLogs));
 
-                        // Append new logs to the beginning of the table
-                        let no = parseInt($("#body-logs tr:first td:first").text()) || 0;
-                        $.each(newLogs, function(i, data) {
-                            // Check if the waktu value already exists in the table
-                            let waktuExists = $("#body-logs").find(`td:contains('${data.waktu}')`).length > 0;
-                            if (!waktuExists) {
-                                $("#body-logs").prepend(`<tr>
-                                <td>` + (++no) + `</td>
-                                <td>` + data.waktu + `</td>
-                                <td>` + data.rfid + `</td>
-                                <td>` + data.gate.name + `</td>
-                                <td>` + data.nopol + `</td>
-                                <td>` + data.status + `</td>
-                            </tr>`);
-                            }
+                        // Append new logs to the first row of the table
+                        $.each(newLogs.reverse(), function(i, data) {
+                            $("#body-logs").prepend(`<tr>
+                            <td>` + (++no) + `</td>
+                            <td>` + data.waktu + `</td>
+                            <td>` + data.rfid + `</td>
+                            <td>` + data.gate.name + `</td>
+                            <td>` + data.nopol + `</td>
+                            <td>` + data.status + `</td>
+                        </tr>`);
                         });
                     }
-                    console.log(newLogs);
                 },
                 error: function() {
                     console.log('Error fetching logs.');
@@ -116,11 +110,11 @@
         }
 
         let storedLogs = JSON.parse(localStorage.getItem("logs")) || [];
-        let no = 1;
+        let no = storedLogs.length + 1; // Set the initial value of 'no' to the last log number + 1
 
         $.each(storedLogs, function(i, data) {
             $("#body-logs").append(`<tr>
-            <td>` + no++ + `</td>
+            <td>` + no-- + `</td>
             <td>` + data.waktu + `</td>
             <td>` + data.rfid + `</td>
             <td>` + data.gate.name + `</td>
@@ -132,7 +126,7 @@
         setInterval(function() {
             get();
             counter++;
-            console.log(counter);
+            console.log(counter)
 
             if (counter >= 1000) {
                 window.location.reload();
