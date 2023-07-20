@@ -33,11 +33,8 @@ class LogController extends Controller
 
     function gate(Request $request)
     {
-        $now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
-        $limit = Carbon::now('Asia/Jakarta')->subSecond(30)->format('Y-m-d H:i:s');
         $gate = Gate::find($request->gate);
-
-        $logs = Log::where('gate_id', $gate->id)->whereBetween('waktu', [$limit, $now])->latest()->get();
+        $logs = Log::where('gate_id', $gate->id)->latest()->get();
 
         return response()->json([
             'logs' => $logs

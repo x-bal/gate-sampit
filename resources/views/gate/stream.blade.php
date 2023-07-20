@@ -37,8 +37,11 @@
 
         function get() {
             $.ajax({
-                url: "{{ route('gate.logs') }}?gate=" + "{{ $gate->id }}",
+                url: "{{ route('gate.logs') }}",
                 type: "GET",
+                data: {
+                    gate: "{{ $gate->id }}"
+                },
                 success: function(response) {
                     let logs = response.logs;
                     console.log(logs)
