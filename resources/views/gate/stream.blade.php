@@ -56,6 +56,7 @@
                     if (newLogs.length > 0) {
                         // Update stored logs
                         storedLogs = logs;
+                        localStorage.removeItem("gatelogs")
                         localStorage.setItem("gatelogs", JSON.stringify(storedLogs));
 
                         let no = parseInt($("#body-logs tr:last td:first").text()) || 0;
