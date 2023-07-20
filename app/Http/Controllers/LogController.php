@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gate;
 use App\Models\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -34,8 +35,9 @@ class LogController extends Controller
     {
         $now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $limit = Carbon::now('Asia/Jakarta')->subSecond(30)->format('Y-m-d H:i:s');
+        $gate = Gate::find($request->gate);
 
-        $logs = Log::where('gate_id', $request->gate)->whereBetween('waktu', [$limit, $now])->latest()->get();
+        $logs = Log::where('gate_id', $gate->id)->whereBetween('waktu', [$limit, $now])->latest()->get();
 
         return response()->json([
             'logs' => $logs

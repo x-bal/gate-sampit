@@ -41,6 +41,7 @@
                 type: "GET",
                 success: function(response) {
                     let logs = response.logs;
+                    console.log(logs)
                     let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || [];
                     let newLogs = [];
 
@@ -69,7 +70,6 @@
                         // Reload page after appending new logs
                         window.location.reload();
                     }
-                    console.log(newLogs)
                 },
                 error: function() {
                     console.log('Error fetching logs.');
