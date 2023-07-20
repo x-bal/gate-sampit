@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Card;
+use App\Models\Gate;
 use App\Models\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,34 +17,49 @@ class ApiController extends Controller
             DB::beginTransaction();
 
             if ($request->rfid && $request->gate) {
-                foreach ($request->rfid as $rfid) {
-                    $card = Card::where('rfid', $rfid)->first();
+                $gate = Gate::find($request->gate);
+                if ($gate) {
+                    foreach ($request->rfid as $rfid) {
+                        $card = Card::where('rfid', $rfid)->first();
 
-                    if ($card) {
-                        Log::create([
-                            'rfid' => $card->rfid,
-                            'nopol' => $card->nopol,
-                            'waktu' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
-                            'status' => $card->status == 1 ? 'Active' : 'Nonactive',
-                            'gate_id' => $request->gate
-                        ]);
-                    } else {
-                        Log::create([
-                            'rfid' => $rfid,
-                            'nopol' => '-',
-                            'waktu' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
-                            'status' => 'Tidak Terdaftar',
-                            'gate_id' => $request->gate
-                        ]);
+                        if ($card) {
+                            Log::create([
+                                'rfid' => $card->rfid,
+                                'nopol' => $card->nopol,
+                                'waktu' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                                'status' => $card->status == 1 ? 'Active' : 'Nonactive',
+                                'gate_id' => $request->gate
+                            ]);
+                        } else {
+                            Log::create([
+                                'rfid' => $rfid,
+                                'nopol' => '-',
+                                'waktu' => Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s'),
+                                'status' => 'Tidak Terdaftar',
+                                'gate_id' => $request->gate
+                            ]);
+                        }
                     }
-                }
 
-                $totalRegistered = Card::whereIn('rfid', $request->rfid)->where('status', 1)->count();
+                    $totalRegistered = Card::whereIn('rfid', $request->rfid)->where('status', 1)->count();
 
-                if ($totalRegistered > 0) {
-                    $status = 'Open';
+                    if ($totalRegistered > 0) {
+                        $status = 'Open';
+                    } else {
+                        $status = 'Closed';
+                    }
+
+                    DB::commit();
+
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => $status,
+                    ]);
                 } else {
-                    $status = 'Closed';
+                    return response()->json([
+                        'status' => 'error',
+                        "message" => "Gate not registered"
+                    ]);
                 }
             } else {
                 return response()->json([
@@ -51,13 +67,6 @@ class ApiController extends Controller
                     'message' => "Wrong params"
                 ]);
             }
-
-            DB::commit();
-
-            return response()->json([
-                'status' => 'success',
-                'message' => $status,
-            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
