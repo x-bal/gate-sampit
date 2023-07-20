@@ -34,7 +34,7 @@
 <script>
     $(document).ready(function() {
         let counter = 0;
-        localStorage.removeItem("gatelogs");
+        // localStorage.removeItem("gatelogs");
 
         function get() {
             $.ajax({

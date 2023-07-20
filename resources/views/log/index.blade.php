@@ -70,7 +70,7 @@
 <script>
     $(document).ready(function() {
         let counter = 0;
-        localStorage.removeItem("logs");
+        // localStorage.removeItem("logs");
 
         function get() {
             $.ajax({
