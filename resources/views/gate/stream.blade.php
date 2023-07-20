@@ -45,7 +45,6 @@
                 },
                 success: function(response) {
                     let newTable = response.table;
-                    console.log(newTable)
 
                     // Get the existing table HTML
                     let existingTable = $("#body-logs").html();
