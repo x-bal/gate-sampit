@@ -6,6 +6,7 @@ use App\Models\Gate;
 use App\Models\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LogController extends Controller
 {
@@ -33,14 +34,40 @@ class LogController extends Controller
 
     function gate(Request $request)
     {
+        // $now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
+        // $limit = Carbon::now('Asia/Jakarta')->subSecond(30)->format('Y-m-d H:i:s');
+        // $gate = Gate::find($request->gate);
+
+        // $logs = Log::with('gate')->where('gate_id', $gate->id)->whereBetween('waktu', [$limit, $now])->latest()->get();
+        // $new = $logs->groupBy('rfid')->toArray();
+
+        // return response()->json([
+        //     'logs' => $new,
+        //     'count' => count($new)
+        // ]);
+
         $now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $limit = Carbon::now('Asia/Jakarta')->subSecond(30)->format('Y-m-d H:i:s');
         $gate = Gate::find($request->gate);
 
-        $logs = Log::with('gate')->where('gate_id', $gate->id)->whereBetween('waktu', [$limit, $now])->groupBy('rfid')->latest()->get();
+        $latestLogs = Log::select('logs.*')->with('gate')
+            ->join(
+                DB::raw('(SELECT rfid, MAX(waktu) AS max_waktu FROM logs GROUP BY rfid) as latest_logs'),
+                function ($join) {
+                    $join->on('logs.rfid', '=', 'latest_logs.rfid')
+                        ->on('logs.waktu', '=', 'latest_logs.max_waktu');
+                }
+            )
+            ->where('gate_id', $gate->id)
+            ->whereBetween('waktu', [$limit, $now])
+            ->latest()
+            ->get();
+
+        $new = $latestLogs->groupBy('rfid')->toArray();
 
         return response()->json([
-            'logs' => $logs
+            'logs' => $new,
+            'count' => count($new)
         ]);
     }
 }

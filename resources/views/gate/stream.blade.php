@@ -15,6 +15,7 @@
                             <th>No</th>
                             <th>Waktu</th>
                             <th>Rfid</th>
+                            <th>Gate</th>
                             <th>Nopol</th>
                             <th>Status</th>
                         </tr>
@@ -34,7 +35,6 @@
 <script>
     $(document).ready(function() {
         let counter = 0;
-        let latestIndex = -1; // Variable to keep track of the latest index of stored logs
 
         function get() {
             $.ajax({
@@ -45,29 +45,21 @@
                 },
                 success: function(response) {
                     let logs = response.logs;
-                    let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || [];
-                    let newLogs = [];
+                    let total = response.count;
+                    let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || {};
 
-                    // Find new logs based on the latest index
-                    if (latestIndex < storedLogs.length - 1) {
-                        newLogs = storedLogs.slice(latestIndex + 1);
-                    }
+                    let hasUpdate = false;
 
-                    if (newLogs.length > 0) {
-                        // Update latest index of stored logs
-                        latestIndex = storedLogs.length - 1;
+                    $.each(logs, function(rfid, logArray) {
+                        if (!storedLogs[rfid] || JSON.stringify(storedLogs[rfid]) !== JSON.stringify(logArray)) {
+                            hasUpdate = true;
+                            storedLogs[rfid] = logArray;
+                        }
+                    });
 
-                        let no = parseInt($("#body-logs tr:last td:first").text()) || 0;
-                        $.each(newLogs, function(i, data) {
-                            $("#body-logs").append(`<tr>
-                            <td>` + (++no) + `</td>
-                            <td>` + data.waktu + `</td>
-                            <td>` + data.rfid + `</td>
-                            <td>` + data.gate.name + `</td>
-                            <td>` + data.nopol + `</td>
-                            <td>` + data.status + `</td>
-                        </tr>`);
-                        });
+                    if (hasUpdate) {
+                        localStorage.setItem("gatelogs", JSON.stringify(storedLogs));
+                        window.location.reload();
                     }
                 },
                 error: function() {
@@ -76,28 +68,25 @@
             });
         }
 
-        let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || [];
+        let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || {};
         let no = 1;
 
-        if (storedLogs.length > 0) {
-            latestIndex = storedLogs.length - 1;
-        }
-
-        $.each(storedLogs, function(i, data) {
-            $("#body-logs").append(`<tr>
-            <td>` + no++ + `</td>
-            <td>` + data.waktu + `</td>
-            <td>` + data.rfid + `</td>
-            <td>` + data.gate.name + `</td>
-            <td>` + data.nopol + `</td>
-            <td>` + data.status + `</td>
-        </tr>`);
+        $.each(storedLogs, function(rfid, logArray) {
+            $.each(logArray, function(index, data) {
+                $("#body-logs").append(`<tr>
+                <td>` + no++ + `</td>
+                <td>` + data.waktu + `</td>
+                <td>` + data.rfid + `</td>
+                <td>` + data.gate.name + `</td>
+                <td>` + data.nopol + `</td>
+                <td>` + data.status + `</td>
+            </tr>`);
+            });
         });
 
         setInterval(function() {
             get();
             counter++;
-            console.log(counter)
 
             if (counter >= 1000) {
                 window.location.reload();
