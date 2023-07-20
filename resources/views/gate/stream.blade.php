@@ -41,7 +41,7 @@
                 type: "GET",
                 success: function(response) {
                     let logs = response.logs;
-                    let storedLogs = JSON.parse(localStorage.getItem("logs")) || [];
+                    let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || [];
                     let newLogs = [];
 
                     // Find new logs
@@ -52,7 +52,7 @@
                     if (newLogs.length > 0) {
                         // Update stored logs
                         storedLogs = logs;
-                        localStorage.setItem("logs", JSON.stringify(storedLogs));
+                        localStorage.setItem("gatelogs", JSON.stringify(storedLogs));
 
                         let no = parseInt($("#body-logs tr:last td:first").text()) || 0;
                         $.each(newLogs, function(i, data) {
@@ -77,7 +77,7 @@
             });
         }
 
-        let storedLogs = JSON.parse(localStorage.getItem("logs")) || [];
+        let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || [];
         let no = 1;
 
         $.each(storedLogs, function(i, data) {
