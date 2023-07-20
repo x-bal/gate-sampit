@@ -91,6 +91,8 @@
             latestWaktu = storedLogs[storedLogs.length - 1].waktu;
         }
 
+        console.log(latestWaktu)
+
         $.each(storedLogs, function(i, data) {
             $("#body-logs").append(`<tr>
             <td>` + no++ + `</td>
