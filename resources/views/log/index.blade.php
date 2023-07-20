@@ -68,50 +68,49 @@
 @push('script')
 @if(!request('from') && !request('to'))
 <script>
-    let counter = 0;
-
-    function get() {
-        $.ajax({
-            url: "{{ route('get.logs') }}",
-            type: "GET",
-            success: function(response) {
-                let logs = response.logs;
-                let storedLogs = JSON.parse(localStorage.getItem("logs")) || [];
-                let newLogs = [];
-
-                // Find new logs
-                for (let i = storedLogs.length; i < logs.length; i++) {
-                    newLogs.push(logs[i]);
-                }
-
-                if (newLogs.length > 0) {
-                    // Update stored logs
-                    storedLogs = logs;
-                    localStorage.setItem("logs", JSON.stringify(storedLogs));
-
-                    let no = parseInt($("#body-logs tr:last td:first").text()) || 0;
-                    $.each(newLogs, function(i, data) {
-                        $("#body-logs").append(`<tr>
-                            <td>` + (++no) + `</td>
-                            <td>` + data.waktu + `</td>
-                            <td>` + data.rfid + `</td>
-                            <td>` + data.gate.name + `</td>
-                            <td>` + data.nopol + `</td>
-                            <td>` + data.status + `</td>
-                        </tr>`);
-                    });
-
-                    console.log(newLogs)
-                }
-            },
-            error: function() {
-                console.log('Error fetching logs.');
-            }
-        });
-    }
-
     $(document).ready(function() {
-        // Retrieve logs from localStorage on page load
+        let counter = 0;
+
+        function get() {
+            $.ajax({
+                url: "{{ route('get.logs') }}",
+                type: "GET",
+                success: function(response) {
+                    let logs = response.logs;
+                    let storedLogs = JSON.parse(localStorage.getItem("logs")) || [];
+                    let newLogs = [];
+
+                    // Find new logs
+                    for (let i = storedLogs.length; i < logs.length; i++) {
+                        newLogs.push(logs[i]);
+                    }
+
+                    if (newLogs.length > 0) {
+                        // Update stored logs
+                        storedLogs = logs;
+                        localStorage.setItem("logs", JSON.stringify(storedLogs));
+
+                        let no = parseInt($("#body-logs tr:last td:first").text()) || 0;
+                        $.each(newLogs, function(i, data) {
+                            $("#body-logs").append(`<tr>
+                        <td>` + (++no) + `</td>
+                        <td>` + data.waktu + `</td>
+                        <td>` + data.rfid + `</td>
+                        <td>` + data.gate.name + `</td>
+                        <td>` + data.nopol + `</td>
+                        <td>` + data.status + `</td>
+                    </tr>`);
+                        });
+
+                        console.log(newLogs)
+                    }
+                },
+                error: function() {
+                    console.log('Error fetching logs.');
+                }
+            });
+        }
+
         let storedLogs = JSON.parse(localStorage.getItem("logs")) || [];
         let no = 1;
 
