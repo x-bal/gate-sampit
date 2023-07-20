@@ -20,13 +20,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('cards*') ? 'active' : '' }}" href="/cards">Cards</a>
+                        <a class="nav-link {{ request()->is('cards*') ? 'active' : '' }}" href="{{ route('cards.index') }}">Cards</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('gates*') ? 'active' : '' }}" href="/gates">Gates</a>
+                        <a class="nav-link {{ request()->is('gates*') ? 'active' : '' }}" href="{{ route('gates.index') }}">Gates</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->is('logs*') ? 'active' : '' }}" href="/logs">Logs</a>
+                        <a class="nav-link {{ request()->is('logs*') ? 'active' : '' }}" href="{{ route('logs.index') }}">Logs</a>
                     </li>
                 </ul>
             </div>

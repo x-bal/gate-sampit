@@ -37,7 +37,7 @@
 
         function get() {
             $.ajax({
-                url: "/gate-logs?gate=" + "{{ $gate->id }}",
+                url: "{{ route('gate.logs') }}?gate=" + "{{ $gate->id }}",
                 type: "GET",
                 method: "GET",
                 success: function(response) {

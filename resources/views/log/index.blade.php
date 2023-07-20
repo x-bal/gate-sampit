@@ -72,7 +72,7 @@
 
     function get() {
         $.ajax({
-            url: "/get-logs",
+            url: "{{ route('get.logs') }}",
             type: "GET",
             success: function(response) {
                 let logs = response.logs;
