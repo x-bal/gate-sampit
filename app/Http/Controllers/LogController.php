@@ -34,18 +34,6 @@ class LogController extends Controller
 
     function gate(Request $request)
     {
-        // $now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
-        // $limit = Carbon::now('Asia/Jakarta')->subSecond(30)->format('Y-m-d H:i:s');
-        // $gate = Gate::find($request->gate);
-
-        // $logs = Log::with('gate')->where('gate_id', $gate->id)->whereBetween('waktu', [$limit, $now])->latest()->get();
-        // $new = $logs->groupBy('rfid')->toArray();
-
-        // return response()->json([
-        //     'logs' => $new,
-        //     'count' => count($new)
-        // ]);
-
         $now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $limit = Carbon::now('Asia/Jakarta')->subSecond(30)->format('Y-m-d H:i:s');
         $gate = Gate::find($request->gate);
@@ -65,9 +53,26 @@ class LogController extends Controller
 
         $new = $latestLogs->groupBy('rfid')->toArray();
 
+        $table = '';
+        $no = 1;
+
+
+        foreach ($new as $rfid => $logArray) {
+            foreach ($logArray as $data) {
+                $table .= '<tr>
+                    <td>' . $no++ . '</td>
+                    <td>' . $data['waktu'] . '</td>
+                    <td>' . $data['rfid'] . '</td>
+                    <td>' . $data['gate']['name'] . '</td>
+                    <td>' . $data['nopol'] . '</td>
+                    <td>' . $data['status'] . '</td>
+                </tr>';
+            }
+        }
+
         return response()->json([
             'logs' => $new,
-            'count' => count($new)
+            'table' => $table
         ]);
     }
 }

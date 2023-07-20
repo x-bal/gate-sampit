@@ -44,22 +44,16 @@
                     gate: "{{ $gate->id }}"
                 },
                 success: function(response) {
-                    let logs = response.logs;
-                    let total = response.count;
-                    let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || {};
+                    let newTable = response.table;
+                    console.log(newTable)
 
-                    let hasUpdate = false;
+                    // Get the existing table HTML
+                    let existingTable = $("#body-logs").html();
 
-                    $.each(logs, function(rfid, logArray) {
-                        if (!storedLogs[rfid] || JSON.stringify(storedLogs[rfid]) !== JSON.stringify(logArray)) {
-                            hasUpdate = true;
-                            storedLogs[rfid] = logArray;
-                        }
-                    });
-
-                    if (hasUpdate) {
-                        localStorage.setItem("gatelogs", JSON.stringify(storedLogs));
-                        window.location.reload();
+                    // Compare the new table with the existing table
+                    if (newTable !== existingTable) {
+                        $("#body-logs").html(newTable);
+                        localStorage.setItem("gatelogs", JSON.stringify(response.logs));
                     }
                 },
                 error: function() {
@@ -67,22 +61,6 @@
                 }
             });
         }
-
-        let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || {};
-        let no = 1;
-
-        $.each(storedLogs, function(rfid, logArray) {
-            $.each(logArray, function(index, data) {
-                $("#body-logs").append(`<tr>
-                <td>` + no++ + `</td>
-                <td>` + data.waktu + `</td>
-                <td>` + data.rfid + `</td>
-                <td>` + data.gate.name + `</td>
-                <td>` + data.nopol + `</td>
-                <td>` + data.status + `</td>
-            </tr>`);
-            });
-        });
 
         setInterval(function() {
             get();
