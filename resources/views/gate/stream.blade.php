@@ -53,7 +53,8 @@
                         newLogs.push(logs[i]);
                     }
 
-                    localStorage.removeItem("gatelogs")
+                    console.log(newLogs)
+
                     if (newLogs.length > 0) {
                         // Update stored logs
                         storedLogs = logs;
