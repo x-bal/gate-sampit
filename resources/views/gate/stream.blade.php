@@ -34,7 +34,7 @@
 <script>
     $(document).ready(function() {
         let counter = 0;
-        let latestWaktu = null; // Variable to keep track of the latest "data.waktu"
+        let latestIndex = -1; // Variable to keep track of the latest index of stored logs
 
         function get() {
             $.ajax({
@@ -48,19 +48,14 @@
                     let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || [];
                     let newLogs = [];
 
-                    // Find new logs and check if the latest "data.waktu" is different
-                    for (let i = storedLogs.length; i < logs.length; i++) {
-                        console.log(logs[i].waktu)
-                        if (logs[i].waktu != latestWaktu) {
-                            newLogs.push(logs[i]);
-                        }
+                    // Find new logs based on the latest index
+                    if (latestIndex < storedLogs.length - 1) {
+                        newLogs = storedLogs.slice(latestIndex + 1);
                     }
 
                     if (newLogs.length > 0) {
-                        // Update stored logs and latest "data.waktu"
-                        storedLogs = logs;
-                        localStorage.setItem("gatelogs", JSON.stringify(storedLogs));
-                        latestWaktu = logs[logs.length - 1].waktu; // Update latest "data.waktu"
+                        // Update latest index of stored logs
+                        latestIndex = storedLogs.length - 1;
 
                         let no = parseInt($("#body-logs tr:last td:first").text()) || 0;
                         $.each(newLogs, function(i, data) {
@@ -73,9 +68,6 @@
                             <td>` + data.status + `</td>
                         </tr>`);
                         });
-
-                        // Reload page after appending new logs
-                        window.location.reload();
                     }
                 },
                 error: function() {
@@ -87,9 +79,8 @@
         let storedLogs = JSON.parse(localStorage.getItem("gatelogs")) || [];
         let no = 1;
 
-        // Get the latest "data.waktu" from storedLogs if available
         if (storedLogs.length > 0) {
-            latestWaktu = storedLogs[storedLogs.length - 1].waktu;
+            latestIndex = storedLogs.length - 1;
         }
 
         $.each(storedLogs, function(i, data) {
