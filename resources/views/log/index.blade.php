@@ -113,6 +113,7 @@
         let no = storedLogs.length + 1; // Set the initial value of 'no' to the last log number + 1
 
         $.each(storedLogs, function(i, data) {
+            console.log(data.waktu)
             $("#body-logs").append(`<tr>
             <td>` + no-- + `</td>
             <td>` + data.waktu + `</td>
