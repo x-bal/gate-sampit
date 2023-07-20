@@ -15,7 +15,7 @@ class ApiController extends Controller
         try {
             DB::beginTransaction();
 
-            if ($request->rfid) {
+            if ($request->rfid && $request->gate) {
                 foreach ($request->rfid as $rfid) {
                     $card = Card::where('rfid', $rfid)->first();
 
@@ -37,14 +37,19 @@ class ApiController extends Controller
                         ]);
                     }
                 }
-            }
 
-            $totalRegistered = Card::whereIn('rfid', $request->rfid)->where('status', 1)->count();
+                $totalRegistered = Card::whereIn('rfid', $request->rfid)->where('status', 1)->count();
 
-            if ($totalRegistered > 0) {
-                $status = 'Open';
+                if ($totalRegistered > 0) {
+                    $status = 'Open';
+                } else {
+                    $status = 'Closed';
+                }
             } else {
-                $status = 'Closed';
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "Wrong params"
+                ]);
             }
 
             DB::commit();
