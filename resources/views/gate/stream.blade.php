@@ -50,7 +50,7 @@
 
                     // Find new logs and check if the latest "data.waktu" is different
                     for (let i = storedLogs.length; i < logs.length; i++) {
-                        if (logs[i].waktu !== latestWaktu) {
+                        if (logs[i].waktu != latestWaktu) {
                             newLogs.push(logs[i]);
                         }
                     }
@@ -90,8 +90,6 @@
         if (storedLogs.length > 0) {
             latestWaktu = storedLogs[storedLogs.length - 1].waktu;
         }
-
-        console.log(latestWaktu)
 
         $.each(storedLogs, function(i, data) {
             $("#body-logs").append(`<tr>
