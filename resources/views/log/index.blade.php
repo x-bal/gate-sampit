@@ -93,17 +93,19 @@
                         let no = parseInt($("#body-logs tr:last td:first").text()) || 0;
                         $.each(newLogs, function(i, data) {
                             $("#body-logs").append(`<tr>
-                        <td>` + (++no) + `</td>
-                        <td>` + data.waktu + `</td>
-                        <td>` + data.rfid + `</td>
-                        <td>` + data.gate.name + `</td>
-                        <td>` + data.nopol + `</td>
-                        <td>` + data.status + `</td>
-                    </tr>`);
+                            <td>` + (++no) + `</td>
+                            <td>` + data.waktu + `</td>
+                            <td>` + data.rfid + `</td>
+                            <td>` + data.gate.name + `</td>
+                            <td>` + data.nopol + `</td>
+                            <td>` + data.status + `</td>
+                        </tr>`);
                         });
 
-                        console.log(newLogs)
+                        // Reload page after appending new logs
+                        window.location.reload();
                     }
+                    console.log(newLogs)
                 },
                 error: function() {
                     console.log('Error fetching logs.');
@@ -116,13 +118,13 @@
 
         $.each(storedLogs, function(i, data) {
             $("#body-logs").append(`<tr>
-                <td>` + no++ + `</td>
-                <td>` + data.waktu + `</td>
-                <td>` + data.rfid + `</td>
-                <td>` + data.gate.name + `</td>
-                <td>` + data.nopol + `</td>
-                <td>` + data.status + `</td>
-            </tr>`);
+            <td>` + no++ + `</td>
+            <td>` + data.waktu + `</td>
+            <td>` + data.rfid + `</td>
+            <td>` + data.gate.name + `</td>
+            <td>` + data.nopol + `</td>
+            <td>` + data.status + `</td>
+        </tr>`);
         });
 
         setInterval(function() {
