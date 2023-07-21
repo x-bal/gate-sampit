@@ -21,6 +21,9 @@
         <div class="col-md-4">
             <div class="form-group mt-2">
                 <button type="submit" class="btn btn-primary mt-3">Filter</button>
+                @if(request('from') && request('to'))
+                <a href="{{ route('export.logs') }}?from={{ request('from') }}&to={{ request('to') }}" class="btn btn-success mt-3">Export</a>
+                @endif
             </div>
         </div>
     </form>
@@ -60,6 +63,10 @@
                     @endif
                 </table>
             </div>
+
+            @if(request('from') && request('to'))
+            {{ $logs->links() }}
+            @endif
         </div>
     </div>
 </div>

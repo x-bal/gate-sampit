@@ -4,6 +4,7 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\GateController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,14 +18,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [LoginController::class, 'index'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('login.store');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/cards/change/{card:id}', [CardController::class, 'change'])->name("cards.change");
-Route::resource('/cards', CardController::class);
+Route::middleware('auth')->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/get-logs', [LogController::class, 'get'])->name('get.logs');
-Route::get('/gate-logs', [LogController::class, 'gate'])->name('gate.logs');
-Route::resource('/logs', LogController::class);
+    Route::get('/cards/change/{card:id}', [CardController::class, 'change'])->name("cards.change");
+    Route::resource('/cards', CardController::class);
 
-Route::get('/gates/{gate:id}/stream', [GateController::class, 'stream'])->name('gates.stream');
-Route::resource('gates', GateController::class);
+    Route::get('/get-logs', [LogController::class, 'get'])->name('get.logs');
+    Route::get('/gate-logs', [LogController::class, 'gate'])->name('gate.logs');
+    Route::get('/log-export', [LogController::class, 'export'])->name('export.logs');
+    Route::resource('/logs', LogController::class);
+
+    Route::get('/gates/{gate:id}/stream', [GateController::class, 'stream'])->name('gates.stream');
+    Route::resource('gates', GateController::class);
+});

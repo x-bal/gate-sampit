@@ -19,6 +19,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
+                    @auth
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('cards*') ? 'active' : '' }}" href="{{ route('cards.index') }}">Cards</a>
                     </li>
@@ -28,6 +29,15 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('logs*') ? 'active' : '' }}" href="{{ route('logs.index') }}">Logs</a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('logout*') ? 'active' : '' }}" href="{{ route('logout') }}">Logout</a>
+                    </li>
+                    @endauth
+
+                    @guest
+
+                    @endguest
                 </ul>
             </div>
         </div>

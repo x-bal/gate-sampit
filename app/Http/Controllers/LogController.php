@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LogExport;
 use App\Models\Gate;
 use App\Models\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LogController extends Controller
 {
@@ -15,7 +17,7 @@ class LogController extends Controller
         $logs = [];
         if ($request->from && $request->to) {
             $to = Carbon::parse($request->to)->addDay(1)->format('Y-m-d H:i:s');
-            $logs = Log::with('gate')->whereBetween('waktu', [$request->from, $to])->latest()->get();
+            $logs = Log::with('gate')->whereBetween('waktu', [$request->from, $to])->latest()->paginate(15);
         }
         return view('log.index', compact('logs'));
     }
@@ -72,5 +74,10 @@ class LogController extends Controller
             'logs' => $logs,
             'table' => $table
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new LogExport, 'log-data.xlsx');
     }
 }
