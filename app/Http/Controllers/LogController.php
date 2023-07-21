@@ -50,41 +50,26 @@ class LogController extends Controller
         $now = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i:s');
         $limit = Carbon::now('Asia/Jakarta')->subSecond(30)->format('Y-m-d H:i:s');
         $gate = Gate::find($request->gate);
+        $id = $gate->id;
 
-        $latestLogs = Log::select('logs.*')->with('gate')
-            ->join(
-                DB::raw('(SELECT rfid, MAX(waktu) AS max_waktu FROM logs GROUP BY rfid) as latest_logs'),
-                function ($join) {
-                    $join->on('logs.rfid', '=', 'latest_logs.rfid')
-                        ->on('logs.waktu', '=', 'latest_logs.max_waktu');
-                }
-            )
-            ->where('gate_id', $gate->id)
-            ->whereBetween('waktu', [$limit, $now])
-            ->latest()
-            ->get();
-
-        $new = $latestLogs->groupBy('rfid')->toArray();
+        $logs = DB::select("SELECT logs.*, gates.name as name FROM logs JOIN gates ON logs.gate_id = gates.id WHERE logs.gate_id = '$id' AND logs.waktu >= '$limit' AND logs.waktu <= '$now' AND logs.id IN (SELECT MAX(id) AS max_id FROM logs WHERE logs.gate_id = '$id' AND logs.waktu >= '$limit' AND logs.waktu <= '$now' GROUP BY logs.rfid) ORDER BY logs.id DESC");
 
         $table = '';
         $no = 1;
 
-
-        foreach ($new as $rfid => $logArray) {
-            foreach ($logArray as $data) {
-                $table .= '<tr>
+        foreach ($logs as $data) {
+            $table .= '<tr>
                     <td>' . $no++ . '</td>
-                    <td>' . $data['waktu'] . '</td>
-                    <td>' . $data['rfid'] . '</td>
-                    <td>' . $data['gate']['name'] . '</td>
-                    <td>' . $data['nopol'] . '</td>
-                    <td>' . $data['status'] . '</td>
+                    <td>' . $data->waktu . '</td>
+                    <td>' . $data->rfid . '</td>
+                    <td>' . $data->name . '</td>
+                    <td>' . $data->nopol . '</td>
+                    <td>' . $data->status . '</td>
                 </tr>';
-            }
         }
 
         return response()->json([
-            'logs' => $new,
+            'logs' => $logs,
             'table' => $table
         ]);
     }
