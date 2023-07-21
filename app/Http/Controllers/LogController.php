@@ -25,9 +25,22 @@ class LogController extends Controller
         if ($request->ajax()) {
             $now = Carbon::now('Asia/Jakarta')->format('Y-m-d');
             $logs = Log::with('gate')->whereDate('waktu', $now)->latest()->get();
+            $table = '';
+            $no = 1;
 
+            foreach ($logs as $data) {
+                $table .= '<tr>
+                    <td>' . $no++ . '</td>
+                    <td>' . $data->waktu . '</td>
+                    <td>' . $data->rfid . '</td>
+                    <td>' . $data->gate->name . '</td>
+                    <td>' . $data->nopol . '</td>
+                    <td>' . $data->statu . '</td>
+                </tr>';
+            }
             return response()->json([
-                'logs' => $logs
+                'logs' => $logs,
+                'table' => $table
             ]);
         }
     }
