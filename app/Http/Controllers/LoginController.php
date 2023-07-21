@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gate;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,9 @@ class LoginController extends Controller
 {
     function index(Request $request)
     {
-        return view('auth.login');
+        $gates = Gate::get();
+
+        return view('auth.login', compact('gates'));
     }
 
     function login(Request $request)

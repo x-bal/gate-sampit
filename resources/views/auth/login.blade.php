@@ -40,5 +40,36 @@
         </div>
     </div>
 
+    <div class="row mt-5">
+        <div class="col-md-12">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>ID Gate</th>
+                            <th>Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach($gates as $gate)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $gate->id_gate }}</td>
+                            <td>{{ $gate->name }}</td>
+                            <td>
+                                <a href="{{ route('gates.stream', $gate->id) }}" class="btn btn-info text-light">Stream</a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 @stop
