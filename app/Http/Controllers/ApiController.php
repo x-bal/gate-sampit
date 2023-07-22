@@ -20,7 +20,7 @@ class ApiController extends Controller
                 $gate = Gate::find($request->gate);
                 if ($gate) {
                     foreach ($request->rfid as $rfid) {
-                        $card = Card::where('rfid', $rfid)->first();
+                        $card = Card::where('rfid', 'like', '%' . $rfid . '%')->first();
 
                         if ($card) {
                             Log::create([
