@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [LoginController::class, 'index'])->name('login');
+Route::get('/', [LoginController::class, 'index'])->middleware('guest')->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.store');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/gate-logs', [LogController::class, 'gate'])->name('gate.logs');
